@@ -1,8 +1,6 @@
-import 'package:carelan/startup/httpPostExaple.dart';
-import 'package:carelan/startup/login_Screen.dart';
-import 'package:carelan/startup/otp_Screen.dart';
+import 'package:carelan/startup/otp_screen.dart';
 import 'package:carelan/startup/register.dart';
-import 'package:carelan/startup/splasshscreen.dart';
+import 'package:carelan/startup/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -25,10 +23,10 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashSchreen(),
+      home: const SplashScreen(),
       routes: {
-        '/OtpScreen' : (context) => OtpScreen(),
-        '/Register' : (context) => Register()
+        '/OtpScreen': (context) => const OtpScreen(),
+        '/Register': (context) => const Register()
       },
     );
   }

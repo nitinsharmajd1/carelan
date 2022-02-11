@@ -1,40 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'login_Screen.dart';
+import 'login_screen.dart';
 
-class SplashSchreen extends StatefulWidget {
-  const SplashSchreen({Key? key}) : super(key: key);
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<SplashSchreen> createState() => _SplashSchreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashSchreenState extends State<SplashSchreen> {
+class _SplashScreenState extends State<SplashScreen> {
+  @override
   void initState() {
     super.initState();
     startTime();
   }
 
   startTime() async {
-    print("object");
-    var duration = new Duration(seconds: 3);
-    return new Timer(duration, route);
+    debugPrint("object");
+    var duration = const Duration(seconds: 3);
+    return Timer(duration, route);
   }
 
   route() {
-    Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) => LoginScreen()
-    )
-    );
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Container(
           // color: Colors.white,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -53,15 +53,17 @@ class _SplashSchreenState extends State<SplashSchreen> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                SizedBox(height: 20,),
-                Text(
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
                   "1.0",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.0,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 )
               ])),

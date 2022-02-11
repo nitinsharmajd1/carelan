@@ -5,7 +5,5 @@ class AppUrl {
   static const String sendOtp = baseURL + "/send-otp";
   static const String viewOtp = baseURL + "/view-otp";
   static const String verify = baseURL + "/verify-otp";
-  static const String getusertype = baseURL + "/get-user-type";
-
-
+  static const String getUserType = baseURL + "/get-user-type";
 }
