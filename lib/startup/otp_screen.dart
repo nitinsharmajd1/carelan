@@ -1,5 +1,5 @@
+import 'package:carelan/model/verify_otp_model.dart';
 import 'package:carelan/service/verify_phoneno.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'dart:async';
@@ -12,15 +12,16 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-
   late Timer _timer;
   int _start = 0;
   bool _verifyButtonDisable = false;
 
+  final TextEditingController _textEditingController = TextEditingController();
+
   void startTimer() {
     _start = 30;
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(oneSec, (Timer timer) {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(oneSec, (Timer timer) {
       if (_start == 0) {
         setState(() {
           timer.cancel();
@@ -33,12 +34,14 @@ class _OtpScreenState extends State<OtpScreen> {
     });
   }
 
+  @override
   void initState() {
     startTimer();
     //fetchOtp();
     super.initState();
   }
 
+  @override
   void dispose() {
     _timer.cancel();
     super.dispose();
@@ -46,12 +49,14 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String mobileNumber = ModalRoute.of(context)!.settings.arguments as String;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
               height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -84,14 +89,16 @@ class _OtpScreenState extends State<OtpScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Enter 4 digit OTP Sent to 9898989898",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),),
+                                 Text("Enter 4 digit OTP Sent to you on " + mobileNumber,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: PinCodeTextField(
+                                    controller: _textEditingController,
                                     appContext: context,
                                     pastedTextStyle: TextStyle(
                                       color: Colors.green.shade600,
@@ -102,11 +109,11 @@ class _OtpScreenState extends State<OtpScreen> {
                                     obscuringCharacter: '*',
                                     onChanged: (text) {
                                       setState(() {
-                                        if(text.length < 4){
+                                        if (text.length < 4) {
                                           _verifyButtonDisable = true;
                                         } else {
                                           _verifyButtonDisable = false;
-                                          FocusScope.of(context).unfocus();
+                                          // FocusScope.of(context).unfocus();
                                         }
                                       });
                                     },
@@ -165,44 +172,63 @@ class _OtpScreenState extends State<OtpScreen> {
                                       //but you can show anything you want here, like your pop up saying wrong paste format or etc
                                       return true;
                                     }*/
-                                  //),
+                                    //),
                                   ),
                                 ),
-                                (_start != 0) ?
-                                Text("Resend OTP $_start sec",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red
-                                ),) :
-                                const Text("Resend OTP sec",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red
-                                  ),),
-                                SizedBox(height: 20),
+                                (_start != 0)
+                                    ? Text(
+                                        "Resend OTP $_start sec",
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red),
+                                      )
+                                    : const Text(
+                                        "Resend OTP sec",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red),
+                                      ),
+                                const SizedBox(height: 20),
                                 ButtonTheme(
                                   minWidth: 150,
                                   height: 45,
                                   child: RaisedButton(
                                       shape: const StadiumBorder(),
                                       color: Colors.pinkAccent,
-                                      child: Text('Verify'),
+                                      child: const Text('Verify'),
                                       splashColor: Colors.pink,
                                       elevation: 6,
                                       textColor: Colors.white,
-                                      onPressed:
-                                          // (){verifyOtp();}
-                                        _verifyButtonDisable
-                                            ? null
-                                            : () => Navigator.pushNamed(
-                                            context, '/Register')
-                                        ),
-                                        )
-                                        ],
-                                        ),
-                                      //}
+                                      onPressed: () {
+                                        setState(
+                                            () => _verifyButtonDisable = false);
+                                        verifyOtp(
+                                          mobile: mobileNumber,
+                                          otp: _textEditingController.text,
+
+                                        ).then((value) {
+                                          setState(() =>
+                                              _verifyButtonDisable = true);
+                                          VerifyOTPModel verifyOTPModel = value;
+                                          print(verifyOTPModel.status);
+                                          if (verifyOTPModel.status == 0) {
+                                            Navigator.pushNamed(
+                                                context, '/Register',
+                                                arguments: mobileNumber);
+                                          } else if(verifyOTPModel.status == 1){
+                                            Navigator.pushNamed(
+                                                context, '/homapage',
+                                                arguments: mobileNumber);
+
+                                          }
+                                        });
+                                      }),
+                                )
+                              ],
+                            ),
+                            //}
                           )),
                     ],
                   )

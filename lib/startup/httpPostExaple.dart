@@ -1,117 +1,158 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
-Future<Album> createAlbum(String title) async {
-  final response = await http.post(
-    Uri.parse('https://jsonplaceholder.typicode.com/albums'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'title': title,
-    }),
-  );
-
-  print('response--------------------');
-  print(response);
-
-  if (response.statusCode == 201) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
-    return Album.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception('Failed to create album.');
-  }
-}
-
-class Album {
-  final int id;
-  final String title;
-
-  const Album({required this.id, required this.title});
-
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      id: json['id'],
-      title: json['title'],
-    );
-  }
-}
-
-// void main() {
-//   runApp(const MyApp());
+// import 'package:carelan/model/deshboardmodel/all_user.dart';
+// import 'package:flutter/material.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:async';
+// import 'dart:convert';
+//
+// class MyHomePage extends StatefulWidget {
+//   @override
+//   _MyHomePageState createState() => new _MyHomePageState();
 // }
-
-class MyApp1 extends StatefulWidget {
-  const MyApp1({Key? key}) : super(key: key);
-
-  @override
-  _MyAppState createState() {
-    return _MyAppState();
-  }
-}
-
-class _MyAppState extends State<MyApp1> {
-  final TextEditingController _controller = TextEditingController();
-  Future<Album>? _futureAlbum;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Create Data Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Create Data Example'),
-        ),
-        body: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(8.0),
-          child: (_futureAlbum == null) ? buildColumn() : buildFutureBuilder(),
-        ),
-      ),
-    );
-  }
-
-  Column buildColumn() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        TextField(
-          controller: _controller,
-          decoration: const InputDecoration(hintText: 'Enter Title'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _futureAlbum = createAlbum(_controller.text);
-            });
-          },
-          child: const Text('Create Data'),
-        ),
-      ],
-    );
-  }
-
-  FutureBuilder<Album> buildFutureBuilder() {
-    return FutureBuilder<Album>(
-      future: _futureAlbum,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data!.title);
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-
-        return const CircularProgressIndicator();
-      },
-    );
-  }
-}
+//
+// class _MyHomePageState extends State<MyHomePage> {
+//   late StreamController<AllUser> _postsController;
+//   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+//
+//   int count = 1;
+//
+//   Future<AllUser> fetchPost() async {
+//     String url = 'https://www.carelan.in/api/get-all-user-profile';
+//     final response = await http.get(Uri.parse(url));
+//     print('----------hello--');
+//     print(response);
+//
+//     if (response.statusCode == 200) {
+//       return AllUser.fromJson(json.decode(response.body));
+//     } else {
+//       throw Exception('Failed to load post');
+//     }
+//   }
+//
+//   // loadPosts() async {
+//   //   fetchPost().then((res) async {
+//   //     _postsController.add(res);
+//   //     return res;
+//   //   });
+//   // }
+//
+//   showSnack() {
+//     return scaffoldKey.currentState!.showSnackBar(
+//       SnackBar(
+//         content: Text('New content loaded'),
+//       ),
+//     );
+//   }
+//
+//   // Future<Null> _handleRefresh() async {
+//   //   count++;
+//   //   print(count);
+//   //   fetchPost().then((res) async {
+//   //     _postsController.add(res);
+//   //     showSnack();
+//   //     return null;
+//   //   });
+//   // }
+//
+//   @override
+//   void initState() {
+//     _postsController = new StreamController<AllUser>();
+//     //loadPosts();
+//     // fetchPost().then((res) async {
+//     //   _postsController.add(res);
+//     //   showSnack();
+//     //   return null;
+//     // });
+//
+//     fetchPost().then((value) async{
+//       AllUser allUser = value;
+//       print('------all user------');
+//       print(allUser);
+//       if (allUser.status == 1) {
+//         return _postsController.add(allUser);
+//         // Navigator.pushNamed(
+//         //     context, '/OtpScreen',
+//         //     arguments: _controller.text);
+//       }
+//       // ScaffoldMessenger.of(context)
+//       //     .showSnackBar(SnackBar(
+//       //     content: Text(
+//       //       loginByMobileModel.msg ?? "",
+//       //     )));
+//     });
+//
+//     super.initState();
+//   }
+//   void dispose() {
+//     //_postsController.close();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return new Scaffold(
+//       key: scaffoldKey,
+//       // appBar: new AppBar(
+//       //   title: new Text('StreamBuilder'),
+//       //   actions: <Widget>[
+//       //     IconButton(
+//       //       tooltip: 'Refresh',
+//       //       icon: Icon(Icons.refresh),
+//       //       onPressed: _handleRefresh,
+//       //     )
+//       //   ],
+//       // ),
+//       body: StreamBuilder<AllUser>(
+//         stream: _postsController.stream,
+//         builder: (BuildContext context, AsyncSnapshot<AllUser> snapshot) {
+//           // print('Has error: ${snapshot.hasError}');
+//           // print('Has data: ${snapshot.hasData}');
+//           print('Snapshot Data ${(snapshot.data)}');
+//
+//           AllUser alldata = (snapshot.data)!.status as AllUser;
+//             print(alldata);
+//           if (snapshot.hasError) {
+//             return Text('error');
+//           }
+//
+//           if (snapshot.hasData) {
+//             return Column(
+//               children: <Widget>[
+//                /* Expanded(
+//                   child: Scrollbar(
+//                     child: RefreshIndicator(
+//                       onRefresh: _handleRefresh,
+//                       child: ListView.builder(
+//                         physics: const AlwaysScrollableScrollPhysics(),
+//                         itemCount: snapshot.data.length,
+//                         itemBuilder: (context, index) {
+//                           //var post = snapshot.data[index];
+//                           return ListTile(
+//                             //title: Text(snapshot.data),
+//                             //title: Text(post['title']['rendered']),
+//                             //subtitle: Text(post['date']),
+//                           );
+//                         },
+//                       ),
+//                     ),
+//                   ),
+//                 ),*/
+//               ],
+//             );
+//           }
+//
+//           if (snapshot.connectionState != ConnectionState.done) {
+//             return Center(
+//               child: CircularProgressIndicator(),
+//             );
+//           }
+//
+//           if (!snapshot.hasData &&
+//               snapshot.connectionState == ConnectionState.done) {
+//             return Text('No Posts');
+//           }
+//           return Text('No post');
+//         },
+//       ),
+//     );
+//   }
+// }
+//

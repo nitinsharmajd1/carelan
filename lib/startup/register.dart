@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:carelan/model/registermodel.dart';
+import 'package:carelan/model/usertype.dart';
 import 'package:carelan/service/verify_phoneno.dart';
 import 'package:flutter/material.dart';
 
@@ -11,19 +13,58 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  String dropdownValue = '--Select user type--';
-  List<String> items = ['Doctor', 'Central team', 'Care buddy', 'Accountant'];
-  //List<String> items = fetchAlbum() as List<String>;
+
+  String? _value;
+ final items = ['Doctor', 'Central team', 'Care buddy', 'Accountant'];
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
+
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    //print(fetchAlbum());
+
+
+
+
+    // getUserType().then((value) {
+    //
+    //   print(value);
+    //
+    //   UserType userModel = value;
+    //
+    //   if (userModel.status == "1") {
+    //
+    //     print(userModel.userTypes);
+    //     //print(userModel.userTypes);
+    //   }
+    // });
+
   }
 
   @override
   Widget build(BuildContext context) {
+    final String mobileNumber = ModalRoute.of(context)!.settings.arguments as String;
+    print(mobileNumber);
+    // textField(String lblTxt, String hntTxt) {
+    //   return Container(
+    //     child: Padding(
+    //       padding: const EdgeInsets.all(8.0),
+    //       child: TextField(
+    //         controller: _valueController,
+    //         decoration: InputDecoration(
+    //           border: OutlineInputBorder(),
+    //           labelText: lblTxt,
+    //           hintText: hntTxt,
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -69,25 +110,71 @@ class _RegisterState extends State<Register> {
                                     fontSize: 18,
                                   ),
                                 ),
-                                DropdownButton(
-                                  hint: Text('--Select user type--',
-                                      style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500),
-                                  ),
-                                  items: items.map((e) => DropdownMenuItem(
-                                      child: Container(
-                                      alignment: Alignment.centerLeft,
-                                        child: Text(e,style: TextStyle(fontSize: 18),),
-                                      ),
-                                  value: dropdownValue,
-                                  )).toList(),
-                                  onChanged: (newvalue) => newvalue = dropdownValue,
+                                DropdownButton<String>(
+                                  items:
+                                  //items.map(buildMenuItem()).toList(),
+                                  [
+                                    DropdownMenuItem<String>(
+                                      child: Text('Doctor'),
+                                      value: "1",
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      child: Text('Field Worker'),
+                                      value: '2',
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      child: Text('Accountant'),
+                                      value: '3',
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      child: Text('Customer'),
+                                      value: '4',
+                                    ),
+                                ],
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      _value = value;
+                                    });
+                                  },
+                                  hint: Text('--Select User Type--'),
+                                  value: _value,
                                 ),
-                                textField('Name', 'Enter your name'),
-                                textField('Email', 'Email'),
-                                textField('Address', 'Address'),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextField(
+                                    controller: _nameController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Name',
+                                      hintText: 'Enter your name',
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextField(
+                                    controller: _emailController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Email',
+                                      hintText: 'Enter email',
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextField(
+                                    controller: _addressController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Address',
+                                      hintText: 'Address',
+                                    ),
+                                  ),
+                                ),
+                                // textField('Name', 'Enter your name',),
+                                // textField('Email', 'Email'),
+                                // textField('Address', 'Address'),
                                 SizedBox(height: 20),
                                 ButtonTheme(
                                   minWidth: 150,
@@ -99,7 +186,30 @@ class _RegisterState extends State<Register> {
                                     splashColor: Colors.pink,
                                     elevation: 6,
                                     textColor: Colors.white,
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      print('-----------------');
+                                      print(mobileNumber);
+                                      print(_value);
+                                      print(_nameController.text);
+                                      print(_emailController.text);
+                                      print(_addressController.text);
+
+                                      register(
+                                          user_type : '$_value',
+                                          name : _nameController.text,
+                                          email : _emailController.text,
+                                          mobile : mobileNumber,
+                                          address : _addressController.text
+
+                                      ).then((value) {
+                                        UserRegisterModel userRegisterModel = value;
+                                        print(userRegisterModel.status);
+                                        if (userRegisterModel.status == 1) {
+                                          var message = userRegisterModel.msg as String;
+                                          showAlertDialog(context, message);
+                                        }
+                                      });
+                                    },
                                     // _verifyButtonDisable
                                     //     ? null
                                     //     : () => Navigator.pushNamed(
@@ -118,18 +228,31 @@ class _RegisterState extends State<Register> {
     );
   }
 
-   textField(String lblTxt, String hntTxt) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: lblTxt,
-            hintText: hntTxt,
-          ),
-        ),
-      ),
-    );
+ showAlertDialog(BuildContext context, String msg) {
+
+      // set up the button
+      Widget okButton = TextButton(
+        child: Text("OK"),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: Center(child: Text("Confirm")),
+        content: Text(msg),
+        actions: [
+          okButton,
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
   }
-}
