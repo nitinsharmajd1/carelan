@@ -1,7 +1,12 @@
+import 'package:carelan/home/admin_deshboard.dart';
+import 'package:carelan/home/doctor_deshboard.dart';
+import 'package:carelan/startup/httpPostExaple.dart';
 import 'package:carelan/startup/otp_screen.dart';
 import 'package:carelan/startup/register.dart';
 import 'package:carelan/startup/splash_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'home/doctor/add_patient.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,10 +28,13 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashScreen(),
+      home: DoctorDeshboard(),//const SplashScreen(),
       routes: {
         '/OtpScreen': (context) => const OtpScreen(),
-        '/Register': (context) => const Register()
+        '/Register': (context) => const Register(),
+        '/adminDeshboard': (context) => const HomePage(),
+        '/doctorDeshboard' : (context) => const DoctorDeshboard(),
+        '/addPatient' : (contxt) => const AddPatient()
       },
     );
   }

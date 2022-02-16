@@ -1,5 +1,5 @@
 class VerifyOTPModel {
-  String? status;
+  int? status;
   List<Details>? details;
 
   VerifyOTPModel({this.status, this.details});

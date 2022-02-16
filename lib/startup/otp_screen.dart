@@ -49,8 +49,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String mobileNumber =
-        ModalRoute.of(context)!.settings.arguments as String;
+    final String mobileNumber = ModalRoute.of(context)!.settings.arguments as String;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -89,12 +89,11 @@ class _OtpScreenState extends State<OtpScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
-                                  "Enter 4 digit OTP Sent to 9898989898",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
+                                 Text("Enter 4 digit OTP Sent to you on " + mobileNumber,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
@@ -208,14 +207,21 @@ class _OtpScreenState extends State<OtpScreen> {
                                         verifyOtp(
                                           mobile: mobileNumber,
                                           otp: _textEditingController.text,
+
                                         ).then((value) {
                                           setState(() =>
                                               _verifyButtonDisable = true);
-                                          debugPrint("value ======> $value");
                                           VerifyOTPModel verifyOTPModel = value;
-                                          if (verifyOTPModel.status == "1") {
+                                          print(verifyOTPModel.status);
+                                          if (verifyOTPModel.status == 0) {
                                             Navigator.pushNamed(
-                                                context, '/Register');
+                                                context, '/Register',
+                                                arguments: mobileNumber);
+                                          } else if(verifyOTPModel.status == 1){
+                                            Navigator.pushNamed(
+                                                context, '/homapage',
+                                                arguments: mobileNumber);
+
                                           }
                                         });
                                       }),

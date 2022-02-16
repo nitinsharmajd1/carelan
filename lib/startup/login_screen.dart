@@ -128,7 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fetchOtp(
                                       mobile: _controller.text,
                                     ).then((value) {
-                                      debugPrint("value ======> $value");
                                       LoginByMobileModel loginByMobileModel =
                                           value;
                                       if (loginByMobileModel.status == 1) {
